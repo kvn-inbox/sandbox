@@ -55,7 +55,7 @@ function getrand($min, $max) {
 	// TODO: give only 25%
 
 	mt_srand(make_seed());
-	if (mt_rand(1,4) == 3) {
+	if (mt_rand(1,250) == 10) {
 
 		$randval = mt_rand($min*100, $max*100)/100;
 		// echo '*'.$randval."*";
@@ -102,18 +102,26 @@ for ($conversionRateLH = 0; $conversionRateLH<0.95; $conversionRateLH+=0.1) {
 	print_b($bb);
 }
 
-$kkk=0;
-for ($k=0; $k<1000; $k++) {
-	$brokers[0]['conversionRateLH'] = 0;
-	$bb = calcWeight($brokers);
-		// echo $k.', brokerStatWeight = '.$bb[0]['brokerStatWeight']."\n";
-	 if ($bb[0]['brokerStatWeight'] > 88) {
-		echo '--------'.$k.', brokerStatWeight = '.$bb[0]['brokerStatWeight']."\n";
-	 	$kkk++;
-	 }
+$ff=0;
+$max_kkk = 0;
+for ($ff=0; $ff<1000; $ff++) {
+		$kkk=0;
+		for ($k=0; $k<1000; $k++) {
+			$brokers[0]['conversionRateLH'] = 0;
+			$bb = calcWeight($brokers);
+				// echo $k.', brokerStatWeight = '.$bb[0]['brokerStatWeight']."\n";
+			 if ($bb[0]['brokerStatWeight'] > 88) {
+				// echo '--------'.$k.', brokerStatWeight = '.$bb[0]['brokerStatWeight']."\n";
+				$kkk++;
+			 }
+		}
+		echo 'percent: '.($kkk/$k).' ('.$kkk.')'."\n";
+		if ($kkk > $max_kkk) {
+			$max_kkk = $kkk;
+		}
 }
 
-echo $kkk;
 
+echo "Max percent: ".$max_kkk."\n";
 
 ?>
