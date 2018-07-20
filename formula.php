@@ -71,7 +71,8 @@ function calcWeight($brokers) {
 		// OLD FORMULA
 		// $w = (50 * $b['conversionRateLH'] + 20 * $b['conversionRateL3H'] + 15 * $b['conversionRateL12H'] + 10 * $b['conversionRateL24H'] + 5 * $b['conversionRateLW'] + 30 * $b['conversionRateLM'] + 5 * $b['conversionRateHD1d'] + 10 * $b['conversionRateHD7d'] + 15 * $b['conversionRateHD30d']) * $b['conversionRateLH'] / $b['conversionRateLM'];
 
-		$w = ( (($b['conversionRateLH'] < 0.1) ? 50 * $b['conversionRateLM'] : 50 * $b['conversionRateLH']) + 20  * $b['conversionRateL3H'] + 15 * $b['conversionRateL12H'] + 10 * $b['conversionRateL24H'] + 5 * $b['conversionRateLW'] + 30 * $b['conversionRateLM'] + 5 * $b['conversionRateHD1d'] + 10 * $b['conversionRateHD7d'] + 15 * $b['conversionRateHD30d']) * (((($b['conversionRateLH'] < 0.1) ? getrand(0, $b['conversionRateLM']) : $b['conversionRateLH']))/ $b['conversionRateLM']);
+		$minimal_hourly_conversion_rate = 0.05;
+		$w = ( (($b['conversionRateLH'] < $minimal_hourly_conversion_rate) ? 50 * $b['conversionRateLM'] : 50 * $b['conversionRateLH']) + 20  * $b['conversionRateL3H'] + 15 * $b['conversionRateL12H'] + 10 * $b['conversionRateL24H'] + 5 * $b['conversionRateLW'] + 30 * $b['conversionRateLM'] + 5 * $b['conversionRateHD1d'] + 10 * $b['conversionRateHD7d'] + 15 * $b['conversionRateHD30d']) * (((($b['conversionRateLH'] < $minimal_hourly_conversion_rate) ? getrand(0, $b['conversionRateLM']) : $b['conversionRateLH']))/ $b['conversionRateLM']);
 		$brokers[$id]['brokerStatWeight']  = $w;
 	}
 
@@ -102,6 +103,7 @@ for ($conversionRateLH = 0; $conversionRateLH<0.95; $conversionRateLH+=0.1) {
 	print_b($bb);
 }
 
+
 $ff=0;
 $max_kkk = 0;
 for ($ff=0; $ff<1000; $ff++) {
@@ -123,5 +125,28 @@ for ($ff=0; $ff<1000; $ff++) {
 
 
 echo "Max percent: ".$max_kkk."\n";
+
+// test for K
+
+	foreach ($brokers[0] as $key=>$value) {
+		for ($m=0;$m<=1;$m+=0.1) {
+			if ($key == 'name') continue;
+			$bb[0][$key] = $m;
+			foreach ($brokers[1] as $key2=>$value2) {
+				if ($key2 == 'name') continue;
+					if ($key == $key2) continue;
+					for ($m2=0; $m2<=1; $m2+=0.1) {
+							$bb[0][$key2] = $m2;
+							$bb = calcWeight($bb);
+//							print_r($bb[0]);
+	//						if ($bb[0]['brokerStatWeight'] >= 120) {
+								print_r($bb[0]);
+	//						}
+					}
+
+			}
+			reset($brokers[1]);
+		}
+	}
 
 ?>
